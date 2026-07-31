@@ -1,0 +1,22 @@
+{
+  "name": "cv-search-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Task 5 - Elastic Search-UI frontend for the cv-transcriptions index",
+  "dependencies": {
+    "@elastic/react-search-ui": "^1.21.1",
+    "@elastic/react-search-ui-views": "^1.21.1",
+    "@elastic/search-ui-elasticsearch-connector": "^1.21.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "browserslist": {
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version"]
+  }
+}

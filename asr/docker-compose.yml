@@ -1,0 +1,11 @@
+# Task 2e — run the containerised ASR API with the required service name.
+#   docker compose up --build -d
+#   curl http://localhost:8001/ping        -> pong
+services:
+  asr-api:
+    build: .
+    image: asr-api
+    container_name: asr-api
+    ports:
+      - "8001:8001"
+    restart: unless-stopped

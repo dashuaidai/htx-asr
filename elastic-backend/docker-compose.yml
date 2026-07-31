@@ -1,0 +1,67 @@
+# Task 4 — 2-node Elasticsearch cluster (index: cv-transcriptions)
+#
+#   docker compose up -d
+#   curl http://localhost:9200                    -> cluster info
+#   curl http://localhost:9200/_cluster/health    -> status green, 2 nodes
+#
+# Notes / assumptions:
+#   * Security (TLS/auth) is disabled to keep the test setup simple; the
+#     deployment design (Task 3) never exposes 9200 publicly.
+#   * 512 MB heap per node — fits a small VM. On the free-tier t2.micro,
+#     lower to 256m and add a swap file (see repo README).
+#   * vm.max_map_count on the Docker host must be >= 262144:
+#       sudo sysctl -w vm.max_map_count=262144
+
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=cv-cluster
+      - discovery.seed_hosts=es02
+      - cluster.initial_master_nodes=es01,es02
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata01:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"          # http://localhost:9200
+    networks: [elastic]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=cv-cluster
+      - discovery.seed_hosts=es01
+      - cluster.initial_master_nodes=es01,es02
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata02:/usr/share/elasticsearch/data
+    networks: [elastic]
+    restart: unless-stopped
+
+volumes:
+  esdata01:
+  esdata02:
+
+networks:
+  elastic:
+    name: elastic     # fixed name so search-ui (Task 5) can join the same network

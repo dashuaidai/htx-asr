@@ -1,0 +1,19 @@
+# Task 5 — Search-UI frontend (http://localhost:3000)
+#
+# Prerequisite: the elastic-backend stack must be up first (it creates the
+# shared Docker network named "elastic" that this service joins):
+#   cd ../elastic-backend && docker compose up -d
+#   cd ../search-ui       && docker compose up --build -d
+services:
+  search-ui:
+    build: .
+    image: cv-search-ui
+    container_name: search-ui
+    ports:
+      - "3000:3000"        # http://localhost:3000
+    networks: [elastic]
+    restart: unless-stopped
+
+networks:
+  elastic:
+    external: true         # created by ../elastic-backend/docker-compose.yml
