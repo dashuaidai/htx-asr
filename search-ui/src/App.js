@@ -28,9 +28,12 @@ const connector = new ElasticsearchAPIConnector({
   // Same-origin path proxied by nginx to http://es01:9200 (see nginx.conf).
   // For local development against a cluster on localhost use:
   //   REACT_APP_ES_HOST=http://localhost:9200 npm start
+  // NOTE: the trailing slash matters — the connector resolves relative URLs
+  // against this base, and without the slash the /elasticsearch segment is
+  // dropped by the browser's URL resolution.
   host:
     process.env.REACT_APP_ES_HOST ||
-    `${window.location.origin}/elasticsearch`,
+    `${window.location.origin}/elasticsearch/`,
   index: "cv-transcriptions"
 });
 

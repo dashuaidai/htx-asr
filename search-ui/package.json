@@ -4,6 +4,7 @@
   "private": true,
   "description": "Task 5 - Elastic Search-UI frontend for the cv-transcriptions index",
   "dependencies": {
+    "ajv": "^8.17.1",
     "@elastic/react-search-ui": "^1.21.1",
     "@elastic/react-search-ui-views": "^1.21.1",
     "@elastic/search-ui-elasticsearch-connector": "^1.21.1",
