@@ -112,13 +112,19 @@ def main() -> None:
         nonlocal completed_since_save
         idx, path = item
         try:
-            text = transcribe_one(session, args.api_url, path, args.retries, args.timeout)
+            result = transcribe_one(session, args.api_url, path, args.retries, args.timeout)
         except Exception as exc:
             with lock:
                 failures.append(str(exc))
             return
         with lock:
-            df.at[idx, "generated_text"] = text
+            df.at[idx, "generated_text"] = result["transcription"]
+            # Backfill duration only if the dataset didn't provide one.
+            current = df.at[idx, "duration"]
+            if result.get("duration") is not None and (
+                pd.isna(current) or str(current).strip() == ""
+            ):
+                df.at[idx, "duration"] = float(result["duration"])
             completed_since_save += 1
             if completed_since_save >= args.checkpoint_every:
                 df.to_csv(output_path, index=False)
