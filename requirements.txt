@@ -1,0 +1,21 @@
+# --- Core API service (Task 2) ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# --- ASR model: facebook/wav2vec2-large-960h (Task 2a) ---
+torch==2.5.1
+torchaudio==2.5.1
+transformers==4.47.1
+
+# --- Audio decoding / resampling to 16 kHz ---
+librosa==0.10.2.post1
+soundfile==0.13.0
+
+# --- Batch transcription client (Task 2d) ---
+requests==2.32.3
+pandas==2.2.3
+tqdm==4.67.1
+
+# --- Elasticsearch indexing (Task 4e) ---
+elasticsearch==8.17.0
