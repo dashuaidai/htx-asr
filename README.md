@@ -19,7 +19,54 @@ deployed on AWS.
 ├── essay.pdf               # Task 8 — Model monitoring & drift essay
 └── README.md
 ```
+## Quickstart (one command, ~10 minutes)
 
+No dataset download, no GPU, no model needed — a transcribed copy of the data
+ships with the repo at `data/cv-valid-dev.csv`:
+
+```bash
+git clone https://github.com/<your-username>/htx-asr.git && cd htx-asr
+bash quickstart.sh
+# then open http://localhost:3000  — full-text search + facet filters over 4,076 records
+```
+
+Stop / clean up:
+
+```bash
+bash quickstop.sh            # pause containers (resume with quickstart.sh)
+bash quickstop.sh --down     # remove containers, keep the indexed data
+bash quickstop.sh --purge    # remove everything incl. data volumes (full reset)
+```
+
+<details>
+<summary>Prefer manual steps? Click to expand.</summary>
+
+```bash
+# 0. Prerequisites: Docker + Compose v2, Python 3.10+; on Linux:
+sudo sysctl -w vm.max_map_count=262144
+
+# 1. Install indexing dependencies
+python3 -m venv .venv && source .venv/bin/activate
+pip install pandas elasticsearch==8.17.0
+
+# 2. Start the 2-node Elasticsearch cluster
+cd elastic-backend && docker compose up -d
+# wait until: curl -s localhost:9200/_cluster/health shows "number_of_nodes":2
+
+# 3. Index the pre-transcribed data
+python cv-index.py --csv ../data/cv-valid-dev.csv
+curl 'http://localhost:9200/cv-transcriptions/_count'   # -> {"count":4076}
+
+# 4. Build and start the search frontend
+cd ../search-ui && docker compose up --build -d
+
+# 5. Open http://localhost:3000
+```
+
+</details>
+
+To run the full pipeline from raw audio (ASR service, batch transcription,
+Docker image with the model baked in), see the task-by-task sections below.
 ## Deployment URL (Task 7)
 
 The Search-UI application is deployed on AWS EC2 (ap-southeast-1) and publicly
@@ -146,7 +193,24 @@ docker compose up -d
 curl http://localhost:9200/_cluster/health   # wait for "number_of_nodes":2
 ```
 
-Index the transcribed CSV into `cv-transcriptions`:
+Index the transcribed CSV into `cv-transcriptions`.
+
+> **Shortcut:** a ready-made transcribed copy is committed at
+> `data/cv-valid-dev.csv` (generated_text + duration already filled in by
+> Task 2d), so you can index immediately without downloading the dataset or
+> re-running the ASR batch step:
+
+```bash
+cd elastic-backend
+python cv-index.py --csv ../data/cv-valid-dev.csv
+curl 'http://localhost:9200/cv-transcriptions/_count'   # -> 4076
+```
+
+If you transcribed the dataset yourself, point `--csv` at your own copy instead:
+
+```bash
+python cv-index.py --csv /path/to/common_voice/cv-valid-dev.csv
+```
 
 ```bash
 python cv-index.py --csv /path/to/common_voice/cv-valid-dev.csv
