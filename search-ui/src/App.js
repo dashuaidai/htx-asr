@@ -23,6 +23,7 @@ import {
 } from "@elastic/react-search-ui";
 import { Layout } from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
+import "./App.css";
 
 const connector = new ElasticsearchAPIConnector({
   // Same-origin path proxied by nginx to http://es01:9200 (see nginx.conf).
@@ -119,11 +120,21 @@ const ResultView = ({ result }) => (
   </li>
 );
 
+/* Spinner shown while a search request is in flight. */
+const LoadingState = () => (
+  <div className="loading-state">
+    <div className="loading-spinner" />
+    <span>Searching…</span>
+  </div>
+);
+
 export default function App() {
   return (
     <SearchProvider config={config}>
-      <WithSearch mapContextToProps={({ wasSearched }) => ({ wasSearched })}>
-        {({ wasSearched }) => (
+      <WithSearch
+        mapContextToProps={({ wasSearched, isLoading }) => ({ wasSearched, isLoading })}
+      >
+        {({ wasSearched, isLoading }) => (
           <div className="App">
             <ErrorBoundary>
               <Layout
@@ -142,7 +153,9 @@ export default function App() {
                     <Facet field="accent" label="Accent" filterType="any" isFilterable={true} />
                   </div>
                 }
-                bodyContent={<Results resultView={ResultView} />}
+                bodyContent={
+                  isLoading ? <LoadingState /> : <Results resultView={ResultView} />
+                }
                 bodyHeader={
                   <>
                     {wasSearched && <PagingInfo />}
