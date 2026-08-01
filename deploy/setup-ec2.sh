@@ -11,13 +11,18 @@ sudo dnf install -y docker git
 sudo systemctl enable --now docker
 sudo usermod -aG docker ec2-user
 
-echo "==> Installing Docker Compose v2 plugin ..."
+echo "==> Installing Docker Compose v2 + buildx plugins ..."
 DOCKER_CONFIG=${DOCKER_CONFIG:-/usr/local/lib/docker}
 sudo mkdir -p "$DOCKER_CONFIG/cli-plugins"
 ARCH=$(uname -m)   # x86_64 or aarch64
 sudo curl -fsSL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-${ARCH}" \
      -o "$DOCKER_CONFIG/cli-plugins/docker-compose"
 sudo chmod +x "$DOCKER_CONFIG/cli-plugins/docker-compose"
+# buildx (required by `compose build` on recent compose releases)
+BUILDX_ARCH=$([ "$ARCH" = "aarch64" ] && echo arm64 || echo amd64)
+sudo curl -fsSL "https://github.com/docker/buildx/releases/download/v0.19.3/buildx-v0.19.3.linux-${BUILDX_ARCH}" \
+     -o "$DOCKER_CONFIG/cli-plugins/docker-buildx"
+sudo chmod +x "$DOCKER_CONFIG/cli-plugins/docker-buildx"
 
 echo "==> Kernel parameter required by Elasticsearch ..."
 sudo sysctl -w vm.max_map_count=262144

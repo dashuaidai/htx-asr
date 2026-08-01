@@ -22,7 +22,14 @@ deployed on AWS.
 
 ## Deployment URL (Task 7)
 
-> _To be added after cloud deployment (Task 6)._
+The Search-UI application is deployed on AWS EC2 (ap-southeast-1) and publicly
+accessible at:
+
+**http://47.129.227.62:3000**
+
+(Backed by the 2-node Elasticsearch cluster on the same instance, with all
+4,076 transcribed cv-valid-dev records indexed in `cv-transcriptions`.
+The cluster itself is intentionally not exposed to the internet — see Task 3.)
 
 ## Prerequisites
 
