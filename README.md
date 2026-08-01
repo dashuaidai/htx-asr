@@ -104,6 +104,37 @@ This writes the transcriptions into a new `generated_text` column and saves
 the updated `cv-valid-dev.csv` back in place. The script is resumable —
 re-running it skips rows that already have a transcription.
 
+### Evaluate transcription quality (WER)
+
+```bash
+python compute-wer.py --csv /path/to/common_voice/cv-valid-dev.csv
+```
+
+Prints corpus-level Word Error Rate of `generated_text` against the
+ground-truth `text` column, plus breakdowns by accent, gender and duration
+(text is normalised — lower-cased, punctuation stripped — before scoring).
+Stratified reporting ties into the monitoring approach described in
+`essay.pdf`: subgroup degradation must not be averaged away.
+
+Measured results on the 4,076 transcribed cv-valid-dev clips:
+
+| Metric | WER |
+|---|---|
+| **Corpus overall** | **10.83%** |
+| Accent: canada / us / england | 4.88% / 8.26% / 9.75% |
+| Accent: australia / indian / philippines | 17.16% / 21.77% / 23.19% |
+| Gender: female / male | 10.29% / 10.83% |
+| Duration: 3–5 s / 5–8 s | 10.66% / 9.52% |
+| Duration: 0–3 s / 8 s + | 13.80% / 13.63% |
+
+Interpretation: the model (trained on LibriSpeech — largely North-American
+read speech) degrades markedly on accents far from its training distribution
+(Indian, Filipino, Australian), while showing no meaningful gender gap; very
+short clips lack context and long clips accumulate errors. The overall 10.83%
+vs ~2–3% on LibriSpeech quantifies the distribution shift — exactly the kind
+of stratified quality signal the monitoring pipeline in `essay.pdf` is
+designed to track continuously.
+
 ## Task 4 — Elasticsearch backend (`elastic-backend/`)
 
 Start the 2-node cluster (needs `vm.max_map_count >= 262144` on the host —
