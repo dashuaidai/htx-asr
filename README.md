@@ -15,10 +15,15 @@ deployed on AWS.
 ├── deployment-design/      # Task 3 — Proposed AWS deployment architecture (design.pdf)
 ├── elastic-backend/        # Task 4 — 2-node Elasticsearch cluster + cv-index.py
 ├── search-ui/              # Task 5 — Search-UI frontend (port 3000)
+├── deploy/                 # Task 6 — EC2 setup / deploy / indexing scripts + AWS guide
+├── data/                   # Transcribed cv-valid-dev.csv (for the Quickstart)
+├── quickstart.sh           # One-command local reproduction
+├── quickstop.sh            # Stop / clean up the stack
 ├── requirements.txt        # Python dependencies
 ├── essay.pdf               # Task 8 — Model monitoring & drift essay
 └── README.md
 ```
+
 ## Quickstart (one command, ~10 minutes)
 
 No dataset download, no GPU, no model needed — a transcribed copy of the data
@@ -67,6 +72,7 @@ cd ../search-ui && docker compose up --build -d
 
 To run the full pipeline from raw audio (ASR service, batch transcription,
 Docker image with the model baked in), see the task-by-task sections below.
+
 ## Deployment URL (Task 7)
 
 The Search-UI application is deployed on AWS EC2 (ap-southeast-1) and publicly
@@ -210,11 +216,6 @@ If you transcribed the dataset yourself, point `--csv` at your own copy instead:
 
 ```bash
 python cv-index.py --csv /path/to/common_voice/cv-valid-dev.csv
-```
-
-```bash
-python cv-index.py --csv /path/to/common_voice/cv-valid-dev.csv
-curl 'http://localhost:9200/cv-transcriptions/_count'   # -> 4076
 ```
 
 `cv-index.py` is idempotent (doc `_id` = filename) — safe to re-run;
