@@ -25,7 +25,7 @@ No dataset download, no GPU, no model needed — a transcribed copy of the data
 ships with the repo at `data/cv-valid-dev.csv`:
 
 ```bash
-git clone https://github.com/<your-username>/htx-asr.git && cd htx-asr
+git clone https://github.com/dashuaidai/htx-asr.git && cd htx-asr
 bash quickstart.sh
 # then open http://localhost:3000  — full-text search + facet filters over 4,076 records
 ```
