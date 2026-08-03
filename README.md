@@ -7,6 +7,12 @@ batch-transcribes the Common Voice `cv-valid-dev` dataset, indexes the results i
 2-node Elasticsearch cluster, and exposes them through an Elastic Search-UI web frontend
 deployed on AWS.
 
+**Key deliverables:**
+[Live demo](http://47.129.227.62:3000) ·
+[Model monitoring & drift essay (essay.pdf)](https://github.com/dashuaidai/htx-asr/blob/main/essay.pdf) ·
+[Deployment architecture (design.pdf)](https://github.com/dashuaidai/htx-asr/blob/main/deployment-design/design.pdf) ·
+[AWS deployment guide](https://github.com/dashuaidai/htx-asr/blob/main/deploy/AWS-DEPLOYMENT-GUIDE.md)
+
 ## Repository structure
 
 ```
